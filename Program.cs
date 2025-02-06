@@ -39,7 +39,9 @@ public class Lexer
         { TokenType.ID, "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b" },
         { TokenType.BINARY_NUMBER, "\\b[01]+\\b" },
         { TokenType.OCTAL_NUMBER, "\\b[0-7]+\\b" },
-        { TokenType.HEXADECIMAL_NUMBER, "\\b[0-9A-F]+\\b" }
+        { TokenType.HEXADECIMAL_NUMBER, "\\b[0-9A-Fa-f]+|\\b[A-Fa-f]" }
+
+
     };
 
     public Lexer(string input)
@@ -97,7 +99,9 @@ public class VariableTable
         {
             TokenType.BIN => Regex.IsMatch(value, "^[01]+$"),
             TokenType.OCT => Regex.IsMatch(value, "^[0-7]+$"),
-            TokenType.HEX => Regex.IsMatch(value, "^[0-9A-F]+$", RegexOptions.IgnoreCase),
+            TokenType.HEX => Regex.IsMatch(value, "^[0-9A-Fa-f]+$", RegexOptions.IgnoreCase),
+
+
             _ => false
         };
 
