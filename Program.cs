@@ -39,7 +39,8 @@ public class Lexer
         { TokenType.ID, "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b" },
         { TokenType.BINARY_NUMBER, "\\b[01]+\\b" },
         { TokenType.OCTAL_NUMBER, "\\b[0-7]+\\b" },
-        { TokenType.HEXADECIMAL_NUMBER, "\\b[0-9A-Fa-f]+|\\b[A-Fa-f]" }
+        { TokenType.HEXADECIMAL_NUMBER, "\\b[A-Fa-f0-9]+\\b" }
+
 
 
     };
@@ -99,7 +100,7 @@ public class VariableTable
         {
             TokenType.BIN => Regex.IsMatch(value, "^[01]+$"),
             TokenType.OCT => Regex.IsMatch(value, "^[0-7]+$"),
-            TokenType.HEX => Regex.IsMatch(value, "^[0-9A-Fa-f]+$", RegexOptions.IgnoreCase),
+            TokenType.HEX => Regex.IsMatch(value, "^[A-Fa-f0-9]+$", RegexOptions.IgnoreCase),
 
 
             _ => false
@@ -123,12 +124,13 @@ class Program
     static void Main()
     {
         VariableTable varTable = new();
-        Console.WriteLine("Ingrese declaraciones de variables (ejemplo: bin var1 1010;), finalice con 'END'");
+        //Para ingresar variables hexadecimales de solo una letra es necesario agrear '0' al inicio
+        Console.WriteLine("Ingrese sus variables (ejemplo: bin varB 1010; o hex varH 0A;), ingrese 'FIN' para seguir\n");
 
         while (true)
         {
             string declaration = Console.ReadLine();
-            if (declaration == "END") break;
+            if (declaration == "FIN") break;
 
             Lexer lexer = new Lexer(declaration);
             List<Token> tokens = lexer.Tokenize();
@@ -144,9 +146,9 @@ class Program
                 string varValue = tokens[2].Value;
 
                 if (varTable.DeclareVariable(varName, varType, varValue))
-                    Console.WriteLine($"Variable {varName} declarada correctamente.");
+                    Console.WriteLine($"Variable {varName} declarada correctamente.\n");
                 else
-                    Console.WriteLine($"Error: La variable {varName} ya fue declarada o tiene un valor incorrecto.");
+                    Console.WriteLine($"Error: La variable {varName} ya fue declarada o tiene un valor incorrecto.\n");
             }
             else
             {
@@ -154,7 +156,7 @@ class Program
             }
         }
 
-        Console.WriteLine("Ingrese una expresión para analizar:");
+        Console.WriteLine("\nIngrese una expresión para analizar:");
         string expression = Console.ReadLine();
         Lexer exprLexer = new Lexer(expression);
         List<Token> exprTokens = exprLexer.Tokenize();
@@ -163,12 +165,12 @@ class Program
         {
             if (token.Type == TokenType.ID && !varTable.IsValidVariable(token.Value))
             {
-                Console.WriteLine($"Error: La variable {token.Value} no fue declarada.");
+                Console.WriteLine($"\nError: La variable {token.Value} no fue declarada.");
                 return;
             }
         }
 
-        Console.WriteLine("Expresión válida.");
+        Console.WriteLine("\nExpresión válida.");
     }
 }
-//Funcionando casi todo.
+
